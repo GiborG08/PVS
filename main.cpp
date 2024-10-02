@@ -19,15 +19,15 @@ int main()
     DigitalOut* ledka3 = new DigitalOut(LED3);
 
     while (true) {
-        *ledka1 = !(*ledka1).read();
+        *ledka1 = !(*ledka1);
         ThisThread::sleep_for(BLINKING_RATE);
-        *ledka1 = !(*ledka1).read();
-        *ledka2 = !(*ledka2).read();
+        *ledka1 = !(*ledka1);
+        *ledka2 = !(*ledka2);
         ThisThread::sleep_for(BLINKING_RATE);
-        *ledka2 = !(*ledka2).read();
-        *ledka3 = !(*ledka3).read();
+        *ledka2 = !(*ledka2);
+        *ledka3 = !(*ledka3);
         ThisThread::sleep_for(BLINKING_RATE);
-        *ledka3 = !(*ledka3).read();
+        *ledka3 = !(*ledka3);
     }
     delete ledka1;
     delete ledka2;
