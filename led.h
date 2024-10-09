@@ -2,11 +2,14 @@
 #include "mbed.h"
 class LED {
     private:
-        DigitalOut led;
+        DigitalOut _led;
+        PwmOut _pwmLed;
     public:
-    LED(PinName pin);
+    LED(PinName pin) :  _led(pin), _pwmLed(pin)
+    {};
     ~LED()=default;
-    DigitalOut* getDigitalOut() { return &led; }
-    void setDigitalOut(int s) { led.write(s); }
+    DigitalOut* getDigitalOut() { return &_led; }
+    PwmOut* getPwm() { return &_pwmLed; }
+    void setDigitalOut(int s) { _led.write(s); }
 };
 
