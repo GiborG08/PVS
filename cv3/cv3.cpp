@@ -1,6 +1,6 @@
-/* mbed Microcontroller Library
+ /*mbed Microcontroller Library
  * Copyright (c) 2019 ARM Limited
- * SPDX-License-Identifier: Apache-2.0
+ * SPDX-License-Identifier: Apache-2.0*/
  
 
 #include "mbed.h"
@@ -63,7 +63,8 @@ int main()
 
     int press = button->getButton()->read();
     while (true) {
-        /**ledka1 = !(*ledka1);
+        /*
+        *ledka1 = !(*ledka1);
         ThisThread::sleep_for(BLINKING_RATE);
         *ledka1 = !(*ledka1);
         *ledka2 = !(*ledka2);
@@ -75,7 +76,7 @@ int main()
         if (press) {
             ledka1->write(!ledka1->read());
         } 
-        ThisThread::sleep_for(BLINKING_RATE)
+        ThisThread::sleep_for(BLINKING_RATE);*/
         binar(counter->read());
         ThisThread::sleep_for(BLINKING_RATE);
     }
@@ -83,5 +84,5 @@ int main()
     delete blue;
     delete red;
     delete button;
-}*/
+}
 
