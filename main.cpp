@@ -4,32 +4,29 @@
  */
 
 #include "mbed.h"
-
+#include "led.h"
+#include "button.h"
+#include "counter.h"
 
 // Blinking rate in milliseconds
-#define BLINKING_RATE     500ms
+#define BLINKING_RATE     175ms
+
+LED* green = new LED(LED1);
+LED* blue = new LED(LED2);
+//LED* red = new LED(LED3);
+
+Button* button = new Button(BUTTON1);
+Counter* counter = new Counter(BUTTON1);
 
 
 int main()
 {
-    // Initialise the digital pin LED1 as an output
-
-    DigitalOut* ledka1 = new DigitalOut(LED1);
-    DigitalOut* ledka2 = new DigitalOut(LED2);
-    DigitalOut* ledka3 = new DigitalOut(LED3);
-
+    green->getPwm()->period(0.01f);
     while (true) {
-        *ledka1 = !(*ledka1);
-        ThisThread::sleep_for(BLINKING_RATE);
-        *ledka1 = !(*ledka1);
-        *ledka2 = !(*ledka2);
-        ThisThread::sleep_for(BLINKING_RATE);
-        *ledka2 = !(*ledka2);
-        *ledka3 = !(*ledka3);
-        ThisThread::sleep_for(BLINKING_RATE);
-        *ledka3 = !(*ledka3);
+        green->getPwm()->write(0.10f);
     }
-    delete ledka1;
-    delete ledka2;
-    delete ledka3;
+    delete green;
+    delete blue;
+   // delete red;
+    delete button;
 }
