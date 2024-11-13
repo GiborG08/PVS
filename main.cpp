@@ -4,29 +4,29 @@
  */
 
 #include "mbed.h"
-#include "led.h"
-#include "button.h"
-#include "counter.h"
+#include "offiko_riesenie_cvik/cv3/Led.h"
+#include "offiko_riesenie_cvik/cv3/Button.h"
+//#include "counter.h"
 
 // Blinking rate in milliseconds
 #define BLINKING_RATE     175ms
 
-LED* green = new LED(LED1);
-LED* blue = new LED(LED2);
+Led* green = new Led(LED1);
+Led* blue = new Led(LED2);
 //LED* red = new LED(LED3);
 
 Button* button = new Button(BUTTON1);
-Counter* counter = new Counter(BUTTON1);
+//Counter* counter = new Counter(BUTTON1);
 
 
 int main()
 {
-    green->getPwm()->period(0.01f);
+    /*green->getPwm()->period(0.01f);
     while (true) {
         green->getPwm()->write(0.10f);
     }
     delete green;
     delete blue;
    // delete red;
-    delete button;
+    delete button;*/
 }
