@@ -1,9 +1,10 @@
 #pragma once
+#include "mbed.h"
+#include <cstdio>
+
 
 #ifndef UART_H
 #define UART_H
-
-#include "mbed.h"
 
 class Uart {
 private:
