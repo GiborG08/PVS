@@ -2,60 +2,64 @@
 #include "Zdroje/Led.h"    // Trieda pre LED
 #include "Zdroje/Uart.h"   // Trieda pre UART
 #include "Zdroje/Button.h" // Trieda pre tlačidlo
-
-// Definovanie hardvérových prvkov pomocou tried z repozitára
-Led led(LED1);              // LED dióda
-Button button(BUTTON1);     // Tlačidlo na doske
-Uart pc(USBTX, USBRX, 9600); // UART komunikácia
-Ticker obstacle_ticker;     // Ticker na generovanie prekážok
+#include "Obstacle.h"      // Trieda pre prekážky
+#include "JumpLogic.h"     // Trieda pre logiku skoku
 
 // Premenné pre stav hry
 bool jump = false;
 bool collision = false;
 int score = 0;
 
-// Funkcia pre skok dinosaura
+// Definovanie hardvérových prvkov pomocou tried z repozitára
+Led led(LED1);              // LED dióda
+Button button(BUTTON1);     // Tlačidlo na doske
+Uart pc(USBTX, USBRX, 9600); // UART komunikácia
+Obstacle obstacle(pc); // Objekt pre generovanie prekážok
+JumpLogic jump_logic(pc, led, jump, collision, score); // Objekt pre logiku skoku
+
+Thread obstacle_thread;
+Thread button_thread;
+
+// Funkcia pre spracovanie skoku pri stlačení tlačidla
 void jump_dino() {
-    if (!jump) {
-        jump = true;
-        pc.print("Jump!\n"); // Odoslanie skoku cez UART
-    }
+    jump_logic.handle_jump();
 }
 
-// Funkcia pre generovanie prekážok
-void generate_obstacle() {
-    // Ak je dinosaurus na "zemi" a nevykoná skok, nastane kolízia
-    if (!jump) {
-        collision = true;
-        led.set(false);  // LED zhasne pri kolízii
-        pc.print("Collision! Game Over. Final Score: %d\n", score);
-        return;
-    } else {
-        // Úspešný skok - zvýšenie skóre
-        score++;
-        pc.print("Score: %d\n", score);
-        led.set(!led.getDuty());  // LED blikne pri úspechu
-        jump = false; // Po skoku sa dinosaurus vráti "na zem"
+// Funkcia pre vlákno generujúce prekážky
+void obstacle_logic_thread() {
+    obstacle.generate_obstacle();
+}
+
+// Funkcia pre vlákno monitorujúce tlačidlo
+void button_logic_thread() {
+    while (!collision) {
+        if (button.wasPressed()) {
+            jump_dino();
+        }
+        ThisThread::sleep_for(50ms); // Kontrola tlačidla každých 50 ms pre rýchlejšiu odozvu
     }
 }
 
 int main() {
-    // Inicializácia
     pc.print("Dino Game Started! Press button to jump.\n");
     led.set(true);  // LED je zapnutá na začiatku hry
-    button.attachOnPress(&jump_dino);  // Prerušenie na stlačenie tlačidla
 
-    // Nastavenie tickeru na generovanie prekážok každé 2 sekundy
-    obstacle_ticker.attach(&generate_obstacle, 2s);
+    // Spustenie vlákien
+    obstacle_thread.start(obstacle_logic_thread);
+    button_thread.start(button_logic_thread);
 
     while (!collision) {
         // Hlavná slučka hry
-        // Všetka logika prebieha v prerušení a tickeri
+        ThisThread::sleep_for(100ms); // Zabraňuje vysokému využitiu CPU v hlavnej slučke
     }
 
     // Koniec hry
     led.set(false);  // LED vypnutá
+    pc.print("Game Over. Thank you for playing!\n");
     while (true) {
         // Nekonečná slučka po ukončení hry
+        ThisThread::sleep_for(1s); // Časová pauza pre stabilitu
+        obstacle_thread.terminate();
+        button_thread.terminate();
     }
 }
